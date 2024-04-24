@@ -98,7 +98,7 @@ public abstract class AbstractBaseZkClientTest {
     public void testDataChanges1() throws Exception {
         LOG.info("--- testDataChanges1");
         String path = "/a";
-        final Holder<String> holder = new Holder<String>();
+        final Holder<String> holder = new Holder<>();
 
         IZkDataListener listener = new IZkDataListener() {
 
@@ -210,7 +210,7 @@ public abstract class AbstractBaseZkClientTest {
         LOG.info("--- testHandleChildChanges");
         String path = "/a";
         final AtomicInteger count = new AtomicInteger(0);
-        final Holder<List<String>> children = new Holder<List<String>>();
+        final Holder<List<String>> children = new Holder<>();
 
         IZkChildListener listener = new IZkChildListener() {
 

@@ -13,20 +13,20 @@ import org.junit.rules.ExternalResource;
 import java.io.IOException;
 import java.util.List;
 
-public class ZkTestSystem extends ExternalResource {
+public final class ZkTestSystem extends ExternalResource {
 
     protected static final Logger LOG = Logger.getLogger(ZkTestSystem.class);
 
-    private static int PORT = 10002;
-    private static ZkTestSystem _instance;
-    private TestingServer _zkServer;
-    private ZkClient _zkClient;
+    private static final int PORT = 10002;
+    private static ZkTestSystem instance;
+    private TestingServer zkServer;
+    private ZkClient zkClient;
 
     private ZkTestSystem() {
         LOG.info("~~~~~~~~~~~~~~~ starting zk system ~~~~~~~~~~~~~~~");
         try {
-            _zkServer = new TestingServer(PORT);
-            _zkClient = ZkTestSystem.createZkClient(_zkServer.getConnectString());
+            zkServer = new TestingServer(PORT);
+            zkClient = ZkTestSystem.createZkClient(zkServer.getConnectString());
         }
         catch ( Exception e ) {
             throw new RuntimeException(e);
@@ -50,7 +50,7 @@ public class ZkTestSystem extends ExternalResource {
         LOG.info("cleanup zk namespace");
         List<String> children = getZkClient().getChildren("/");
         for (String child : children) {
-            if (!child.equals("zookeeper")) {
+            if (!"zookeeper".equals(child)) {
                 getZkClient().deleteRecursive("/" + child);
             }
         }
@@ -59,9 +59,9 @@ public class ZkTestSystem extends ExternalResource {
     }
 
     public static ZkTestSystem getInstance() {
-        if (_instance == null) {
-            _instance = new ZkTestSystem();
-            _instance.cleanupZk();
+        if (instance == null) {
+            instance = new ZkTestSystem();
+            instance.cleanupZk();
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
@@ -76,11 +76,11 @@ public class ZkTestSystem extends ExternalResource {
                 }
             });
         }
-        return _instance;
+        return instance;
     }
 
     public TestingServer getZkServer() {
-        return _zkServer;
+        return zkServer;
     }
 
     public String getZkServerAddress() {
@@ -88,7 +88,7 @@ public class ZkTestSystem extends ExternalResource {
     }
 
     public ZkClient getZkClient() {
-        return _zkClient;
+        return zkClient;
     }
 
     public int getServerPort() {

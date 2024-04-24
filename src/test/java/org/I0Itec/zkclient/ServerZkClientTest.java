@@ -65,15 +65,15 @@ public class ServerZkClientTest extends AbstractBaseZkClientTest {
     @Test(timeout = 15000)
     public void testWaitUntilConnected() throws Exception {
         LOG.info("--- testWaitUntilConnected");
-        ZkClient _client = ZkTestSystem.createZkClient("localhost:4711");
+        ZkClient client = ZkTestSystem.createZkClient("localhost:4711");
 
         _zkServer.close();
 
         // the _client state should change to KeeperState.Disconnected
-        assertTrue(_client.waitForKeeperState(KeeperState.Disconnected, 1, TimeUnit.SECONDS));
+        assertTrue(client.waitForKeeperState(KeeperState.Disconnected, 1, TimeUnit.SECONDS));
 
         // connection should not be possible and timeout after 100ms
-        assertFalse(_client.waitUntilConnected(100, TimeUnit.MILLISECONDS));
+        assertFalse(client.waitUntilConnected(100, TimeUnit.MILLISECONDS));
     }
 
 /*
@@ -247,7 +247,7 @@ public class ServerZkClientTest extends AbstractBaseZkClientTest {
         int numberOfThreads = 2;
         final int numberOfIncrementsPerThread = 100;
 
-        List<Thread> threads = new ArrayList<Thread>();
+        List<Thread> threads = new ArrayList<>();
         for (int i = 0; i < numberOfThreads; i++) {
             Thread thread = new Thread() {
                 @Override

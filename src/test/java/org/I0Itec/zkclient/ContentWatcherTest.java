@@ -17,14 +17,14 @@ public class ContentWatcherTest {
     private static final Logger LOG = Logger.getLogger(ContentWatcherTest.class);
 
     private static final String FILE_NAME = "/ContentWatcherTest";
-    private TestingServer _zkServer;
+    private TestingServer zkServer;
     private ZkClient _zkClient;
 
     @Before
     public void setUp() throws Exception {
         LOG.info("------------ BEFORE -------------");
-        _zkServer = new TestingServer(4711);
-        _zkClient = ZkTestSystem.createZkClient(_zkServer.getConnectString());
+        zkServer = new TestingServer(4711);
+        _zkClient = ZkTestSystem.createZkClient(zkServer.getConnectString());
     }
 
     @After
@@ -32,8 +32,8 @@ public class ContentWatcherTest {
         if (_zkClient != null) {
             _zkClient.close();
         }
-        if (_zkServer != null) {
-            _zkServer.close();
+        if (zkServer != null) {
+            zkServer.close();
         }
         LOG.info("------------ AFTER -------------");
     }
@@ -42,7 +42,7 @@ public class ContentWatcherTest {
     public void testGetContent() throws Exception {
         LOG.info("--- testGetContent");
         _zkClient.createPersistent(FILE_NAME, "a");
-        final ContentWatcher<String> watcher = new ContentWatcher<String>(_zkClient, FILE_NAME);
+        final ContentWatcher<String> watcher = new ContentWatcher<>(_zkClient, FILE_NAME);
         watcher.start();
         assertEquals("a", watcher.getContent());
 
@@ -64,12 +64,12 @@ public class ContentWatcherTest {
     @Test
     public void testGetContentWaitTillCreated() throws InterruptedException {
         LOG.info("--- testGetContentWaitTillCreated");
-        final Holder<String> contentHolder = new Holder<String>();
+        final Holder<String> contentHolder = new Holder<>();
 
         Thread thread = new Thread() {
             @Override
             public void run() {
-                ContentWatcher<String> watcher = new ContentWatcher<String>(_zkClient, FILE_NAME);
+                ContentWatcher<String> watcher = new ContentWatcher<>(_zkClient, FILE_NAME);
                 try {
                     watcher.start();
                     contentHolder.set(watcher.getContent());
@@ -95,7 +95,7 @@ public class ContentWatcherTest {
     public void testHandlingNullContent() throws InterruptedException {
         LOG.info("--- testHandlingNullContent");
         _zkClient.createPersistent(FILE_NAME, null);
-        ContentWatcher<String> watcher = new ContentWatcher<String>(_zkClient, FILE_NAME);
+        ContentWatcher<String> watcher = new ContentWatcher<>(_zkClient, FILE_NAME);
         watcher.start();
         assertEquals(null, watcher.getContent());
         watcher.stop();
@@ -126,7 +126,7 @@ public class ContentWatcherTest {
             }
         }.start();
 
-        final ContentWatcher<String> watcher = new ContentWatcher<String>(zkClient, FILE_NAME);
+        final ContentWatcher<String> watcher = new ContentWatcher<>(zkClient, FILE_NAME);
         watcher.start();
 
         TestUtil.waitUntil("b", new Callable<String>() {

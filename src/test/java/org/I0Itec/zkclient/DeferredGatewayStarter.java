@@ -2,11 +2,11 @@ package org.I0Itec.zkclient;
 
 public class DeferredGatewayStarter extends Thread {
 
-    private final Gateway _zkServer;
-    private int _delay;
+    private final Gateway zkServer;
+    private final int _delay;
 
     public DeferredGatewayStarter(Gateway gateway, int delay) {
-        _zkServer = gateway;
+        zkServer = gateway;
         _delay = delay;
     }
 
@@ -14,7 +14,7 @@ public class DeferredGatewayStarter extends Thread {
     public void run() {
         try {
             Thread.sleep(_delay);
-            _zkServer.start();
+            zkServer.start();
         } catch (Exception e) {
             // ignore
         }
